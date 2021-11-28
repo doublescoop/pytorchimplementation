@@ -1,10 +1,10 @@
-import numpy as np
+# import numpy as np
 from .tensor_data import (
     to_index,
     index_to_position,
     broadcast_index,
     shape_broadcast,
-    MAX_DIMS,
+    # MAX_DIMS,
 )
 
 
@@ -39,7 +39,22 @@ def tensor_map(fn):
     """
 
     def _map(out, out_shape, out_strides, in_storage, in_shape, in_strides):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 2.2.
+        # for i in range(len(out)):
+        #     get the out_index
+        #     broadcast_index() to get the in_index
+        #     apply the function to the corresponding items in storage and save them in out
+        #     curr = in_storage[index_to_position(in_, )]
+
+        # empty out_index to fill in
+        out_index = out_shape.copy()
+        in_index = in_shape.copy()
+        for i in range(len(out)):
+            to_index(i, out_shape, out_index)
+            broadcast_index(out_index, out_shape, in_shape, in_index)
+            curr = index_to_position(in_index, in_strides)
+            out[index_to_position(out_index, out_strides)] = fn(in_storage[curr])
+        # raise NotImplementedError("Need to implement for Task 2.2")
 
     return _map
 
@@ -129,7 +144,17 @@ def tensor_zip(fn):
         b_shape,
         b_strides,
     ):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 2.2.
+        a_index = a_shape.copy()
+        b_index = b_shape.copy()
+        out_index = out_shape.copy()
+        for i in range(len(out)):
+            to_index(i, out_shape, out_index)
+            broadcast_index(out_index, out_shape, a_shape, a_index)
+            broadcast_index(out_index, out_shape, b_shape, b_index)
+            a_curr = a_storage[index_to_position(a_index, a_strides)]
+            b_curr = b_storage[index_to_position(b_index, b_strides)]
+            out[index_to_position(out_index, out_strides)] = fn(a_curr, b_curr)
 
     return _zip
 
@@ -199,7 +224,30 @@ def tensor_reduce(fn):
     """
 
     def _reduce(out, out_shape, out_strides, a_storage, a_shape, a_strides, reduce_dim):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # TODO: Implement for Task 2.2.
+        out_index = out_shape.copy()
+        # a_index = a_shape.copy()
+        # reduce_shape = np.ones(a_shape)
+        # reduce_shape[reduce_dim] = a_shape[reduce_dim]
+
+        # for i in range(len(a_storage)):
+        #     to_index(i, a_shape, a_index)
+        #     broadcast_index(a_index, a_shape, out_shape, out_index)
+        #     out_pos = index_to_position(out_index, out_strides)
+        #     a_pos = index_to_position(a_index, a_strides)
+
+        #     out[out_pos] = fn(out[out_pos], a_storage[a_pos])
+
+        for i in range(len(out)):
+            to_index(i, out_shape, out_index)
+            out_pos = index_to_position(out_index, out_strides)
+            for j in range(a_shape[reduce_dim]):  # loop over reduced dim
+                out_index[reduce_dim] = j
+                idx = index_to_position(
+                    out_index, a_strides
+                )  # actual index where fn is applied to. j on the reduced dim and follow i on other dims
+                out[out_pos] = fn(out[out_pos], a_storage[idx])
+        # raise NotImplementedError("Need to implement for Task 2.2")
 
     return _reduce
 
@@ -227,6 +275,7 @@ def reduce(fn, start=0.0):
     Returns:
         :class:`TensorData` : new tensor
     """
+
     f = tensor_reduce(fn)
 
     def ret(a, dim):

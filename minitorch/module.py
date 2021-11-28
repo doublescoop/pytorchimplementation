@@ -21,11 +21,17 @@ class Module:
 
     def train(self):
         "Set the mode of this module and all descendent modules to `train`."
-        raise NotImplementedError('Need to include this file from past assignment.')
+
+        self.training = True
+        for i in self._modules:
+            self._modules[i].training = True
 
     def eval(self):
         "Set the mode of this module and all descendent modules to `eval`."
-        raise NotImplementedError('Need to include this file from past assignment.')
+
+        self.training = False
+        for i in self._modules:
+            self._modules[i].training = False
 
     def named_parameters(self):
         """
@@ -35,11 +41,25 @@ class Module:
         Returns:
             list of pairs: Contains the name and :class:`Parameter` of each ancestor parameter.
         """
-        raise NotImplementedError('Need to include this file from past assignment.')
+        if len(self._modules) == 0:
+            np = {}
+            for p in self._parameters:
+                np[p] = self._parameters[p]
+            return np
+        else:
+            curr_para = {}
+            for key in self._parameters:
+                curr_para[key] = self._parameters[key]
+            for key in self._modules:
+                child_para = self._modules[key].named_parameters()
+                for name in child_para:
+                    curr_para[key + "." + name] = child_para[name]
+            return curr_para
 
     def parameters(self):
         "Enumerate over all the parameters of this module and its descendents."
-        raise NotImplementedError('Need to include this file from past assignment.')
+
+        return self.named_parameters().values()
 
     def add_parameter(self, k, v):
         """
@@ -70,6 +90,8 @@ class Module:
 
         if key in self.__dict__["_modules"]:
             return self.__dict__["_modules"][key]
+
+        return self.__getattribute__(key)
 
     def __call__(self, *args, **kwargs):
         return self.forward(*args, **kwargs)

@@ -24,7 +24,17 @@ def index_to_position(index, strides):
         int : position in storage
     """
 
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # # TODO: Implement for Task 2.1.g
+
+    position = 0
+    # for i, idx in enumerate(index):
+    #     position += idx * strides[i]
+    # for i in range(len(index)):
+    #     position += index[i] * strides[i]
+    for x, y in zip(index, strides):
+        position += x * y
+    return position
+    # raise NotImplementedError('Need to implement for Task 2.1')
 
 
 def to_index(ordinal, shape, out_index):
@@ -43,7 +53,23 @@ def to_index(ordinal, shape, out_index):
       None : Fills in `out_index`.
 
     """
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # TODO: Implement for Task 2.1.
+
+    # strides = strides_from_shape(shape)
+    # for i, stride in enumerate(strides):
+    #     out_index[i], ordinal = divmod(ordinal, stride)
+    # for i, s in enumerate(shape):
+    #     ordinal, out_index[i] = divmod(ordinal, s)
+
+    # for i in reversed(range(len(out_index))):
+    #     out_index[i] = int(ordinal % shape[i])
+    #     ordinal = ordinal // shape[i]
+    cur_ord = ordinal + 0
+    for i in range(len(shape) - 1, -1, -1):
+        sh = shape[i]
+        out_index[i] = int(cur_ord % sh)
+        cur_ord = cur_ord // sh
+    # raise NotImplementedError('Need to implement for Task 2.1')
 
 
 def broadcast_index(big_index, big_shape, shape, out_index):
@@ -61,9 +87,30 @@ def broadcast_index(big_index, big_shape, shape, out_index):
         out_index (array-like): multidimensional index of smaller tensor
 
     Returns:
-        None : Fills in `out_index`.
+    None: Fills in `out_index`.
     """
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # # TODO: Implement for Task 2.2.
+    # given from prof
+    diff = len(big_shape) - len(shape)
+
+    for i, s in enumerate(shape):
+        if s > 1:
+            out_index[i] = big_index[i + diff]
+        else:
+            out_index[i] = 0
+    # mycode
+    # for i in reversed(range(len(shape))):
+
+    #     diff = len(big_shape) - len(shape)
+
+    #     if shape[i] == 1:
+    #         out_index[i] = 0
+    #     elif big_shape[i] == shape[i]:
+    #         out_index[i] = big_index[i + diff]
+    #     else:
+    #         out_index[i] = 0
+
+    # index has to be same, or one of them is 0 or doesn't exist
 
 
 def shape_broadcast(shape1, shape2):
@@ -80,7 +127,27 @@ def shape_broadcast(shape1, shape2):
     Raises:
         IndexingError : if cannot broadcast
     """
-    raise NotImplementedError('Need to include this file from past assignment.')
+    # TODO: Implement for Task 2.2.
+
+    a, b = shape1, shape2
+    m = max(len(a), len(b))
+    c_rev = [0] * m
+    a_rev = list(reversed(a))
+    b_rev = list(reversed(b))
+    for i in range(m):
+        if i >= len(a):
+            c_rev[i] = b_rev[i]
+        elif i >= len(b):
+            c_rev[i] = a_rev[i]
+        else:
+            c_rev[i] = max(a_rev[i], b_rev[i])
+            if a_rev[i] != c_rev[i] and a_rev[i] != 1:
+                raise IndexingError("Failed Broadcasting Rule")
+            if b_rev[i] != c_rev[i] and b_rev[i] != 1:
+                raise IndexingError("Failed Broadcasting Rule")
+    return tuple(reversed(c_rev))
+
+    # raise NotImplementedError('Need to implement for Task 2.2')
 
 
 def strides_from_shape(shape):
@@ -186,8 +253,14 @@ class TensorData:
         assert list(sorted(order)) == list(
             range(len(self.shape))
         ), f"Must give a position to each dimension. Shape: {self.shape} Order: {order}"
-
-        raise NotImplementedError('Need to include this file from past assignment.')
+        # something like this should happen?:
+        # neworder = tuple(shape[order[0]], shape[order[1], ...])
+        return TensorData(
+            self._storage,
+            tuple([self.shape[i] for i in order]),
+            tuple([self.strides[i] for i in order]),
+        )
+        # raise NotImplementedError('Need to implement for Task 2.1')
 
     def to_string(self):
         s = ""
