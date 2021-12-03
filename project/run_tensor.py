@@ -21,7 +21,7 @@ class Network(minitorch.Module):
         self.layer3 = Linear(hidden_layers, 1)
 
     def forward(self, x):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        raise NotImplementedError("Need to include this file from past assignment.")
 
 
 class Linear(minitorch.Module):
@@ -32,7 +32,7 @@ class Linear(minitorch.Module):
         self.out_size = out_size
 
     def forward(self, x):
-        raise NotImplementedError('Need to include this file from past assignment.')
+        raise NotImplementedError("Need to include this file from past assignment.")
 
 
 def default_log_fn(epoch, total_loss, correct, losses):

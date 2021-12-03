@@ -33,7 +33,7 @@ class Conv1d(minitorch.Module):
 
     def forward(self, input):
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError('Need to implement for Task 4.5')
+        raise NotImplementedError("Need to implement for Task 4.5")
 
 
 class CNNSentimentKim(minitorch.Module):
@@ -60,14 +60,14 @@ class CNNSentimentKim(minitorch.Module):
         super().__init__()
         self.feature_map_size = feature_map_size
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError('Need to implement for Task 4.5')
+        raise NotImplementedError("Need to implement for Task 4.5")
 
     def forward(self, embeddings):
         """
-            embeddings tensor: [batch x sentence length x embedding dim]
+        embeddings tensor: [batch x sentence length x embedding dim]
         """
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError('Need to implement for Task 4.5')
+        raise NotImplementedError("Need to implement for Task 4.5")
 
 
 # Evaluation helper methods
@@ -168,8 +168,14 @@ class SentenceSentimentTrain:
             if data_val is not None:
                 (X_val, y_val) = data_val
                 model.eval()
-                y = minitorch.tensor(y_val, backend=BACKEND,)
-                x = minitorch.tensor(X_val, backend=BACKEND,)
+                y = minitorch.tensor(
+                    y_val,
+                    backend=BACKEND,
+                )
+                x = minitorch.tensor(
+                    X_val,
+                    backend=BACKEND,
+                )
                 out = model.forward(x)
                 validation_predictions += get_predictions_array(y, out)
                 validation_accuracy.append(get_accuracy(validation_predictions))
