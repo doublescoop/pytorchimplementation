@@ -60,6 +60,7 @@ def tensor_map(fn):
         else:
             for i in prange(len(out)):
                 out[i] = fn(in_storage[i])
+
     return njit(parallel=True)(_map)
 
 
@@ -223,6 +224,7 @@ def tensor_reduce(fn):
                 accum = fn(accum, a_storage[j])
                 j += step
             out[o] = accum
+
     return njit(parallel=True)(_reduce)
 
 
@@ -318,6 +320,7 @@ def tensor_matrix_multiply(
                 )
                 out[out_position] = acc
     return out
+
 
 def matrix_multiply(a, b):
     """

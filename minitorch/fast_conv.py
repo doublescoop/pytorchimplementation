@@ -86,13 +86,13 @@ def tensor_conv1d(
         w_index = np.zeros(3, np.int32)
         to_index(p, out_shape, out_index)
         out_pos = index_to_position(out_index, out_strides)
-        
+
         acc = 0.0
-        for k in range(kw): # for every batch # weight_shape[2]
+        for k in range(kw):  # for every batch # weight_shape[2]
             tmp = out_index[2] + k
             if reverse:
-                    tmp = tmp - kw + 1 
-            for j in range(in_channels): # weight_shape[1]
+                tmp = tmp - kw + 1
+            for j in range(in_channels):  # weight_shape[1]
 
                 if tmp < width:
                     in_index[0], in_index[1], in_index[2] = out_index[0], j, tmp
@@ -102,7 +102,8 @@ def tensor_conv1d(
                     w_pos = index_to_position(w_index, s2)
                     acc += input[in_pos] * weight[w_pos]
 
-        out[out_pos] = acc 
+        out[out_pos] = acc
+
 
 class Conv1dFun(Function):
     @staticmethod
@@ -221,8 +222,8 @@ def tensor_conv2d(
     s1 = input_strides
     s2 = weight_strides
     # inners
-    s10, s11, s12, s13 = s1[0], s1[1], s1[2], s1[3]
-    s20, s21, s22, s23 = s2[0], s2[1], s2[2], s2[3]
+    # s10, s11, s12, s13 = s1[0], s1[1], s1[2], s1[3]
+    # s20, s21, s22, s23 = s2[0], s2[1], s2[2], s2[3]
 
     for p in prange(out_size):
         out_index = np.zeros(4, np.int32)
@@ -238,16 +239,26 @@ def tensor_conv2d(
                     tmp_h = out_index[2] + j
                     tmp_w = out_index[3] + k
                     if reverse:
-                        tmp_h = tmp_h - kh + 1 
+                        tmp_h = tmp_h - kh + 1
                         tmp_w = tmp_w - kw + 1
-                    if tmp_h < j and tmp_w < k: 
-                        in_index[0], in_index[1], in_index[2], in_index[3] = out_index[0], i, tmp_h, tmp_w   
-                        w_index[0], w_index[1], w_index[2], w_index[3] = out_index[1], i, j, k
-                        
+                    if tmp_h < j and tmp_w < k:
+                        in_index[0], in_index[1], in_index[2], in_index[3] = (
+                            out_index[0],
+                            i,
+                            tmp_h,
+                            tmp_w,
+                        )
+                        w_index[0], w_index[1], w_index[2], w_index[3] = (
+                            out_index[1],
+                            i,
+                            j,
+                            k,
+                        )
+
                         in_pos = index_to_position(in_index, s1)
                         w_pos = index_to_position(w_index, s2)
-                        acc += (input[in_pos] * weight[w_pos])
-   
+                        acc += input[in_pos] * weight[w_pos]
+
         out[out_pos] = acc
 
     # TODO: Implement for Task 4.2.
