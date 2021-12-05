@@ -1,4 +1,3 @@
-# from threading import Thread
 from numba import cuda
 import numba
 from .tensor_data import (
