@@ -43,6 +43,7 @@ class Conv2d(minitorch.Module):
 
     def forward(self, input):
         # TODO: Implement for Task 4.5.
+        return minitorch.fast_conv.conv2d(input, self.weights.value) + self.bias.value
         raise NotImplementedError("Need to implement for Task 4.5")
 
 

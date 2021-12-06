@@ -1,3 +1,5 @@
+from fast_conv import conv1d
+# from fast_conv import tensor_conv1d
 import minitorch
 from datasets import load_dataset
 import embeddings
@@ -33,6 +35,8 @@ class Conv1d(minitorch.Module):
 
     def forward(self, input):
         # TODO: Implement for Task 4.5.
+        # batch, C_in, width = input.shape
+        return conv1d(input, self.weights.value) + self.bias.value
         raise NotImplementedError("Need to implement for Task 4.5")
 
 
@@ -60,13 +64,19 @@ class CNNSentimentKim(minitorch.Module):
         super().__init__()
         self.feature_map_size = feature_map_size
         # TODO: Implement for Task 4.5.
+        self.embedding_size = embedding_size
+        self.filter_size = filter_sizes
+        self.dropout = dropout
+
+        # cov1d -> relu -> max
+        self.Layer1 = Conv1d(in_channels=self.embedding_size, out_channels=self.feature_map_size, kernel_width=self.filter_size)
         raise NotImplementedError("Need to implement for Task 4.5")
 
     def forward(self, embeddings):
         """
         embeddings tensor: [batch x sentence length x embedding dim]
         """
-        # TODO: Implement for Task 4.5.
+        # TODO: Implement for Task 4.5
         raise NotImplementedError("Need to implement for Task 4.5")
 
 

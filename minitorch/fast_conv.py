@@ -1,10 +1,9 @@
-from inspect import indentsize
+# from inspect import indentsize
 import numpy as np
 from .tensor_data import (
     to_index,
     index_to_position,
-    broadcast_index,
-    MAX_DIMS,
+    broadcast_index
 )
 from .tensor_functions import Function
 from numba import njit, prange
@@ -236,19 +235,23 @@ def tensor_conv2d(
         for i in range(in_channels):
             for j in range(kh):
                 for k in range(kw):
+                    # set the region
                     tmp_h = out_index[2] + j
                     tmp_w = out_index[3] + k
                     if reverse:
+                        # region start from bottom right when reversed(backward)
                         tmp_h = tmp_h - kh + 1
                         tmp_w = tmp_w - kw + 1
                     if tmp_h < j and tmp_w < k:
                         in_index[0], in_index[1], in_index[2], in_index[3] = (
+                            # (batch, C_in, h, w)
                             out_index[0],
                             i,
                             tmp_h,
                             tmp_w,
                         )
                         w_index[0], w_index[1], w_index[2], w_index[3] = (
+                            # (C_out, C_in, h, w)
                             out_index[1],
                             i,
                             j,
