@@ -1,10 +1,6 @@
 # from inspect import indentsize
 import numpy as np
-from .tensor_data import (
-    to_index,
-    index_to_position,
-    broadcast_index
-)
+from .tensor_data import to_index, index_to_position, broadcast_index
 from .tensor_functions import Function
 from numba import njit, prange
 

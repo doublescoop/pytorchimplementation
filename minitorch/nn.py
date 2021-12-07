@@ -27,9 +27,11 @@ def tile(input, kernel):
     new_width = width // kw
     print("n_h:", new_height, "n_w:", new_width)
 
-    ## somehow this only change the view to new_height but not width...?
-    # input = input.contiguous().view(batch, channel, new_height, new_width, kh*kw)
+    ## somehow this only change the view to new_width but not height...?
+    input = input.contiguous().view(batch, channel, new_height, new_width, kh * kw)
     # print('input:', input.shape )
+    # write down 2*4*4
+
     input = input.contiguous().view(batch, channel, height, new_width, kw)
     input = input.permute(0, 1, 3, 2, 4)
     input = input.contiguous().view(batch, channel, new_width, new_height, kh * kw)

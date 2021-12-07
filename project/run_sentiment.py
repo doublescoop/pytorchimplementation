@@ -1,4 +1,5 @@
 from fast_conv import conv1d
+
 # from fast_conv import tensor_conv1d
 import minitorch
 from datasets import load_dataset
@@ -69,7 +70,11 @@ class CNNSentimentKim(minitorch.Module):
         self.dropout = dropout
 
         # cov1d -> relu -> max
-        self.Layer1 = Conv1d(in_channels=self.embedding_size, out_channels=self.feature_map_size, kernel_width=self.filter_size)
+        self.Layer1 = Conv1d(
+            in_channels=self.embedding_size,
+            out_channels=self.feature_map_size,
+            kernel_width=self.filter_size,
+        )
         raise NotImplementedError("Need to implement for Task 4.5")
 
     def forward(self, embeddings):
