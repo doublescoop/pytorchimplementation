@@ -28,7 +28,7 @@ def tile(input, kernel):
     print("n_h:", new_height, "n_w:", new_width)
 
     ## somehow this only change the view to new_width but not height...?
-    input = input.contiguous().view(batch, channel, new_height, new_width, kh * kw)
+    # input = input.contiguous().view(batch, channel, new_height, new_width, kh * kw)
     # print('input:', input.shape )
     # write down 2*4*4
 
@@ -38,7 +38,7 @@ def tile(input, kernel):
     input = input.permute(0, 1, 3, 2, 4)
 
     return input, new_height, new_width
-    raise NotImplementedError("Need to implement for Task 4.3")
+    # raise NotImplementedError("Need to implement for Task 4.3")
 
 
 def avgpool2d(input, kernel):
@@ -59,7 +59,7 @@ def avgpool2d(input, kernel):
     input = input.mean(4)  # mean by kh*kw
     input = input.view(batch, channel, input.shape[2], input.shape[3])
     return input
-    raise NotImplementedError("Need to implement for Task 4.3")
+    # raise NotImplementedError("Need to implement for Task 4.3")
 
 
 max_reduce = FastOps.reduce(operators.max, -1e9)
@@ -127,7 +127,7 @@ def softmax(input, dim):
     sumoverdim = input.sum(dim)
     input = input / sumoverdim
     return input
-    raise NotImplementedError("Need to implement for Task 4.4")
+    # raise NotImplementedError("Need to implement for Task 4.4")
 
 
 def logsoftmax(input, dim):
