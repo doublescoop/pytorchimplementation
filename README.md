@@ -121,6 +121,7 @@ Best Valid accuracy: 71.00%
 Epoch 29, loss 17.950741531449655, train accuracy: 82.89%
 Validation accuracy: 69.00%
 Best Valid accuracy: 71.00%
+<img width="369" alt="Screen Shot 2021-12-08 at 12 40 04 AM" src="https://user-images.githubusercontent.com/42717070/145154562-05513cd5-0e50-4113-86e1-fc78ce3161bb.png">
 
 
 * MNIST
