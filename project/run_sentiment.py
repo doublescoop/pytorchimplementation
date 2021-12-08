@@ -1,5 +1,3 @@
-from fast_conv import conv1d
-
 # from fast_conv import tensor_conv1d
 import minitorch
 from datasets import load_dataset
@@ -36,8 +34,7 @@ class Conv1d(minitorch.Module):
 
     def forward(self, input):
         # TODO: Implement for Task 4.5.
-        # batch, C_in, width = input.shape
-        return conv1d(input, self.weights.value) + self.bias.value
+        return minitorch.fast_conv.conv1d(input, self.weights.value) + self.bias.value
         raise NotImplementedError("Need to implement for Task 4.5")
 
 
@@ -59,29 +56,60 @@ class CNNSentimentKim(minitorch.Module):
         self,
         feature_map_size=100,
         embedding_size=50,
-        filter_sizes=[3, 4, 5],
+        filter_sizes=[
+            3,
+            4,
+            5,
+        ],  # using three different convolution filters, a 100 of each
         dropout=0.25,
     ):
         super().__init__()
         self.feature_map_size = feature_map_size
         # TODO: Implement for Task 4.5.
-        self.embedding_size = embedding_size
-        self.filter_size = filter_sizes
+
         self.dropout = dropout
 
         # cov1d -> relu -> max
-        self.Layer1 = Conv1d(
-            in_channels=self.embedding_size,
+        self.conv1 = Conv1d(
+            in_channels=embedding_size,
             out_channels=self.feature_map_size,
-            kernel_width=self.filter_size,
+            kernel_width=filter_sizes[0],
         )
-        raise NotImplementedError("Need to implement for Task 4.5")
+        self.conv2 = Conv1d(
+            in_channels=embedding_size,
+            out_channels=self.feature_map_size,
+            kernel_width=filter_sizes[1],
+        )
+        self.conv3 = Conv1d(
+            in_channels=embedding_size,
+            out_channels=feature_map_size,
+            kernel_width=filter_sizes[2],
+        )
+
+        self.final = Linear(feature_map_size, 1)  # concat 100 outputs from each channel
+        # raise NotImplementedError("Need to implement for Task 4.5")
 
     def forward(self, embeddings):
         """
         embeddings tensor: [batch x sentence length x embedding dim]
         """
         # TODO: Implement for Task 4.5
+        batch, length, embedding = embeddings.shape  # embeddings is input tensor here
+        embeddings = embeddings.permute(0, 2, 1)
+        out1 = minitorch.max(self.conv1.forward(embeddings).relu(), 2)
+        out2 = minitorch.max(self.conv2.forward(embeddings).relu(), 2)
+        out3 = minitorch.max(self.conv3.forward(embeddings).relu(), 2)  # (10, 100, 1)
+        # print(out1.shape, out2.shape, out3.shape)
+        # out3: batch, 100, (length - c ) and apply max(2) over it to make it to (batch, 100)
+        # mid = np.concatenate([out1, out2, out3]).view(batch, self.feature_map_size)
+        mid = out1 + out2 + out3
+        mid = mid.view(mid.shape[0], mid.shape[1])
+        # print(mid.shape)  #(10, 100)
+        z = self.final.forward(mid)
+        z = minitorch.dropout(z, self.dropout)
+        z = z.sigmoid().view(batch)
+        return z
+
         raise NotImplementedError("Need to implement for Task 4.5")
 
 

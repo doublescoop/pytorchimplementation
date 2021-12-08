@@ -43,8 +43,8 @@ class Conv2d(minitorch.Module):
 
     def forward(self, input):
         # TODO: Implement for Task 4.5.
-        return minitorch.fast_conv.conv2d(input, self.weights.value) + self.bias.value
-        raise NotImplementedError("Need to implement for Task 4.5")
+        return minitorch.conv2d(input, self.weights.value) + self.bias.value
+        # raise NotImplementedError("Need to implement for Task 4.5")
 
 
 class Network(minitorch.Module):
@@ -55,7 +55,7 @@ class Network(minitorch.Module):
 
     1. Apply a convolution with 4 output channels and a 3x3 kernel followed by a ReLU (save to self.mid)
     2. Apply a convolution with 8 output channels and a 3x3 kernel followed by a ReLU (save to self.out)
-    3. Apply 2D pooling (either Avg or Max) with 2x2 kernel.
+    3. Apply 2D pooling (either Avg or Max) with 4x4 kernel.
     4. Flatten channels, height, and width. (Should be size BATCHx392)
     5. Apply a Linear to size 64 followed by a ReLU and Dropout with rate 25%
     6. Apply a Linear to size C (number of classes).
@@ -70,11 +70,32 @@ class Network(minitorch.Module):
         self.out = None
 
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError("Need to implement for Task 4.5")
+
+        self.conv1 = Conv2d(1, 4, 3, 3)
+        self.conv2 = Conv2d(4, 8, 3, 3)  # 8 * 28 * 28 / 4*4 = 392
+        self.linear1 = Linear(392, 64)  # q: applied batch-times?
+        self.linear2 = Linear(64, C)  # C = number of classes
+
+        # raise NotImplementedError("Need to implement for Task 4.5")
 
     def forward(self, x):
         # TODO: Implement for Task 4.5.
-        raise NotImplementedError("Need to implement for Task 4.5")
+        # initial input = (BATCH, 1, 28, 28)
+        self.mid = self.conv1.forward(x).relu()
+        self.out = self.conv2.forward(self.mid).relu()  # self.out = (BATCH, 8, 28, 28)
+        pooled = minitorch.avgpool2d(self.out, (4, 4))  # pooled = (BATCH, 8, 7, 7)
+        flattened = pooled.view(BATCH, 392)
+        # flattened = pooled.view(
+        #     BATCH, pooled._tensor.shape[1] * pooled._tensor.shape[2] * pooled._tensor.shape[3]
+        # )  # (batch, channel, height, width)
+        z = self.linear1.forward(flattened)
+        if self.training:
+            z = minitorch.dropout(z, 0.25)
+        z = self.linear2.forward(z)
+        z = minitorch.logsoftmax(z, 1)
+        return z
+
+        # raise NotImplementedError("Need to implement for Task 4.5")
 
 
 def make_mnist(start, stop):
