@@ -43,7 +43,7 @@
     {
       "name": "Task 4.4",
       "setup": "sudo -H pip3 install -qr requirements.txt",
-      "run": "pytest -m task4_4",
+      "run": "pytest -m task4_4 ",
       "input": "",
       "output": "",
       "comparison": "included",
